@@ -7,7 +7,7 @@ class ProductItem extends StatelessWidget {
   final String title;
   final String imageUrl;
 
-  ProductItem(this.id, this.title, this.imageUrl);
+  const ProductItem({Key?key, required this.id,required this.title,required this.imageUrl}):super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -29,8 +29,8 @@ class ProductItem extends StatelessWidget {
         footer: GridTileBar(
           backgroundColor: Colors.black87,
           leading: IconButton(
-            icon: Icon(Icons.favorite),
-            color: Theme.of(context).accentColor,
+            icon:const Icon(Icons.favorite),
+            color: Theme.of(context).primaryColor,
             onPressed: () {},
           ),
           title: Text(
@@ -38,11 +38,11 @@ class ProductItem extends StatelessWidget {
             textAlign: TextAlign.center,
           ),
           trailing: IconButton(
-            icon: Icon(
+            icon: const Icon(
               Icons.shopping_cart,
             ),
             onPressed: () {},
-            color: Theme.of(context).accentColor,
+            color: Theme.of(context).primaryColor,
           ),
         ),
       ),
