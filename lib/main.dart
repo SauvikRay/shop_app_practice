@@ -10,7 +10,7 @@ import 'provider/products_provide.dart';
 void main() => runApp(MultiProvider(
       providers: [
         ChangeNotifierProvider(
-          create: (context) => ProductsProvider(),
+          create: (BuildContext context) => ProductsProvider(),
         ),
       ],
       child: const MyApp(),
@@ -30,7 +30,7 @@ class MyApp extends StatelessWidget {
         ),
         home: ProductsOverviewScreen(),
         routes: {
-          ProductDetailScreen.routeName: (ctx) => const ProductDetailScreen(),
+          ProductDetailScreen.routeName: (contx) => const ProductDetailScreen(),
         });
   }
 }
