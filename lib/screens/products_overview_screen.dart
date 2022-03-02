@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:shop_app_practice/widgets/badge.dart';
+import '../screens/cart_screen.dart';
+import '../widgets/app_drawer.dart';
+import '../widgets/badge.dart';
 import '../provider/cart.dart';
 import '../widgets/products_grid.dart';
 
@@ -48,15 +50,19 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
                         value: FilterOption.All,
                       ),
                     ]),
-                    Consumer<Cart>( builder:(_, cartData, child) => 
-                      Badge(
-                        child: child!,
-                         value: cartData.itemCount.toString(),
-                      ),
-                      child: IconButton(icon:const Icon( Icons.shopping_cart),onPressed: (){},) ,
-                       ) ,  //child: IconButton(icon:const Icon( Icons.shopping_cart),onPressed: (){},),)),),
+            Consumer<Cart>( 
+              builder:(_, cartData, child) 
+                    {return Badge(
+                            child: child!,
+                            value: cartData.itemCount.toString(),
+                            );
+                    },
+              child: IconButton(icon:const Icon( Icons.shopping_cart),onPressed: (){
+                Navigator.pushNamed(context, CartScreen.routeName);
+              },),) ,  //child: IconButton(icon:const Icon( Icons.shopping_cart),onPressed: (){},),)),),
           ],
         ),
+        drawer:const AppDrawer(),
         body: ProductGrid(showOnlyFavorites: _showOnlyFavorites),
       ),
     );
