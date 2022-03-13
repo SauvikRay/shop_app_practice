@@ -17,7 +17,7 @@ class OrdersScreen extends StatelessWidget {
         drawer:const AppDrawer(),
         body:ListView.builder(
           itemCount: ordersData.orders.length,
-          itemBuilder: (ctx,index)=> OrderItems(ordersData.orders[index]),
+          itemBuilder: (ctx,index)=> OrderItems(order: ordersData.orders[index]),
           ),
       ),
     );

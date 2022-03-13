@@ -7,8 +7,8 @@ import '../provider/cart.dart';
 import '../widgets/products_grid.dart';
 
 enum FilterOption {
-  Favourites,
-  All,
+  favourites,
+  all,
 }
 
 class ProductsOverviewScreen extends StatefulWidget {
@@ -33,7 +33,7 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
                   //print(selectedValue);
 
                   setState(() {
-                    if (selectedValue == FilterOption.Favourites) {
+                    if (selectedValue == FilterOption.favourites) {
                       _showOnlyFavorites = true;
                     } else {
                       _showOnlyFavorites = false;
@@ -43,11 +43,11 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
                 itemBuilder: (_) => [
                       const PopupMenuItem(
                         child: Text('Only Favorites'),
-                        value: FilterOption.Favourites,
+                        value: FilterOption.favourites,
                       ),
                       const PopupMenuItem(
                         child: Text('Show All'),
-                        value: FilterOption.All,
+                        value: FilterOption.all,
                       ),
                     ]),
             Consumer<Cart>( 

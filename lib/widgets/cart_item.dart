@@ -21,19 +21,49 @@ class CartItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final remove = Provider.of<Cart>(context,listen: false);
+    final remove = Provider.of<Cart>(context, listen: false);
     return Dismissible(
       key: ValueKey(id),
-      background: Container(color: Colors.red,
-      child:const Icon(Icons.delete,color: Colors.white,),alignment: Alignment.centerRight,
-      padding:const EdgeInsets.only(right: 20),
-      margin: const EdgeInsets.symmetric(horizontal: 15, vertical: 4),
+      background: Container(
+        color: Colors.red,
+        child: const Icon(
+          Icons.delete,
+          color: Colors.white,
+        ),
+        alignment: Alignment.centerRight,
+        padding: const EdgeInsets.only(right: 20),
+        margin: const EdgeInsets.symmetric(horizontal: 15, vertical: 4),
       ),
       direction: DismissDirection.endToStart,
-      onDismissed: (direction){
+      confirmDismiss: (direction) {
+        return showDialog(
+          context: context,
+          builder: (builder) => AlertDialog(
+            title:const Text('Are you sure !'),
+            content:const Text('Continue !!'),
+            actions: [
+              TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop(true);
+                  },
+                  child: const Text(
+                    'Yes',
+                  ),),
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop(false);
+                },
+                child: const Text(
+                  'No',
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+      onDismissed: (direction) {
         remove.removeItem(productId);
       },
-
       child: Card(
         margin: const EdgeInsets.symmetric(horizontal: 15, vertical: 4),
         child: Padding(
