@@ -38,7 +38,7 @@ class ProductsProvider with ChangeNotifier {
     ),
   ];
 
- // var _showFavoritesOnly = false;
+  // var _showFavoritesOnly = false;
 
   List<Product> get items {
     // if(_showFavoritesOnly){
@@ -46,13 +46,14 @@ class ProductsProvider with ChangeNotifier {
     // }
     return [..._items];
   }
-//Filtering the Favorites Item 
+
+//Filtering the Favorites Item
   List<Product> get favoritesProduct {
     return _items.where((element) => element.isFavorite).toList();
   }
 
 //Filtering the Favorites Item
-  // void showFavoritesOnly(){ 
+  // void showFavoritesOnly(){
   //   _showFavoritesOnly = true;
   //   notifyListeners();
   // }
@@ -63,19 +64,38 @@ class ProductsProvider with ChangeNotifier {
   // }
 
 //Filtering data by ID
-  Product findById(String id){
+  Product findById(String id) {
     return _items.firstWhere((product) => product.id == id);
-
   }
 
   //Filtering data by title
 
-  Product findByTitle(String title){
+  Product findByTitle(String title) {
     return _items.firstWhere((product) => product.title == title);
   }
 
-  void addProduct() {
-    //_items.add(value);
+  void addProduct(Product product) {
+    final newProduct = Product(
+        id: DateTime.now().toString(),
+        title: product.title,
+        description: product.description,
+        price: product.price,
+        imageUrl: product.imageUrl);
+    _items.add(newProduct);
+    // _items.insert(0, newProduct); // add at the start ot the list
+
     notifyListeners();
+  }
+
+  void updateProduct(String id, Product newProduct){
+    final productIndex= _items.indexWhere((product) => product.id == id);
+
+    if(productIndex >= 0){
+              _items[productIndex]= newProduct;
+              notifyListeners();
+    } else {
+      //print('.......');
+    }
+    
   }
 }
