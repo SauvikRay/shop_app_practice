@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
@@ -78,64 +79,53 @@ class ProductsProvider with ChangeNotifier {
   }
 
   void addProduct(Product product) {
-      // final url = Uri.https('https://shopapp-e73fe-default-rtdb.asia-southeast1.firebasedatabase.app/', '/products.json');
-      // http.post(
-      //             url, 
-      //             body: jsonEncode({
-      //               'titile' : product.title,
-      //               'description': product.description,
-      //               'price': product.price,
-      //                'imageUrl': product.imageUrl,
-      //                'isFavorite': product.isFavorite,
-      //             }),
-      //          );
+    http
+        .post(
+      //Working Code
+      Uri.parse(
+          'https://shopapp-e73fe-default-rtdb.asia-southeast1.firebasedatabase.app/products.json'),
+      body: jsonEncode(<String, dynamic>{
+        'title': product.title,
+        'description': product.description,
+        'price': product.price,
+        'imageUrl': product.imageUrl,
+        'isFavorite': product.isFavorite,
+      }),
+    )
+        .then((response) {
+      //After surver is correctly respond
+      print(json.decode(response.body));
 
-      Future<http.Response>createProduct(String title,String description,double price,String imageUrl, bool isFavorite){
-        return http.post(
-          Uri.parse('https://shopapp-e73fe-default-rtdb.asia-southeast1.firebasedatabase.app/products.json'),
-          body: jsonEncode({
-                    'titile' : product.title,
-                    'description': product.description,
-                    'price': product.price,
-                     'imageUrl': product.imageUrl,
-                     'isFavorite': product.isFavorite,
-          }),
+      final newProduct = Product(
+          id: json.decode(response.body)['name'],    //DateTime.now().toString(),
+          title: product.title,
+          description: product.description,
+          price: product.price,
+          imageUrl: product.imageUrl);
+      _items.add(newProduct);
+      // _items.insert(0, newProduct); // add at the start ot the list
 
-        );
-      }
-  
-    final newProduct = Product(
-        id: DateTime.now().toString(),
-        title: product.title,
-        description: product.description,
-        price: product.price,
-        imageUrl: product.imageUrl);
-    _items.add(newProduct);
-    // _items.insert(0, newProduct); // add at the start ot the list
-
-    notifyListeners();
+      notifyListeners();
+    });
   }
-  
-  //Update Product
-  void updateProduct(String id, Product newProduct){
-    final productIndex= _items.indexWhere((product) => product.id == id);
 
-    if(productIndex >= 0){
-              _items[productIndex]= newProduct;
-              notifyListeners();
+  //Update Product
+  void updateProduct(String id, Product newProduct) {
+    final productIndex = _items.indexWhere((product) => product.id == id);
+
+    if (productIndex >= 0) {
+      _items[productIndex] = newProduct;
+      notifyListeners();
     } else {
       // print('.......');
     }
-    
   }
 
   //Delete Product
 
-  void deleteProduct(String id){
+  void deleteProduct(String id) {
     _items.removeWhere((product) => product.id == id);
 
     notifyListeners();
   }
-
-
 }

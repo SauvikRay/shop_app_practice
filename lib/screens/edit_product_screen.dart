@@ -90,6 +90,7 @@ class _EditProdductScreenState extends State<EditProdductScreen> {
           .updateProduct(_editedProduct.id, _editedProduct);
     } else {
       Provider.of<ProductsProvider>(context, listen: false).addProduct(_editedProduct);
+      
     }
     Navigator.of(context).pop();
   }
@@ -125,6 +126,7 @@ class _EditProdductScreenState extends State<EditProdductScreen> {
           actions: [
             IconButton(onPressed: (){
               _saveForm();
+
             },
              icon:const Icon(Icons.save),),
           ],
