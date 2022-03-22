@@ -7,8 +7,7 @@ import 'package:shop_app_practice/provider/product.dart';
 import 'package:http/http.dart' as http;
 
 class ProductsProvider with ChangeNotifier {
-   List<Product> _items = [
-   
+  List<Product> _items = [
     // Product(
     //   id: 'p1',
     //   title: 'Red Shirt',
@@ -41,8 +40,6 @@ class ProductsProvider with ChangeNotifier {
     //   imageUrl:
     //       'https://upload.wikimedia.org/wikipedia/commons/thumb/1/14/Cast-Iron-Pan.jpg/1024px-Cast-Iron-Pan.jpg',
     // ),
-  
-  
   ];
 
   // var _showFavoritesOnly = false;
@@ -80,23 +77,24 @@ class ProductsProvider with ChangeNotifier {
   Product findByTitle(String title) {
     return _items.firstWhere((product) => product.title == title);
   }
+
 //sending data to the realtime Storage
- Future <void> addProduct(Product product) async {
-    try{ 
-        final response=  await http.post(
-      //Working Code
-      Uri.parse(
-          'https://shopapp-e73fe-default-rtdb.asia-southeast1.firebasedatabase.app/products.json'),
-      body: jsonEncode(<String, dynamic>{
-        'title': product.title,
-        'description': product.description,
-        'price': product.price,
-        'imageUrl': product.imageUrl,
-        'isFavorite': product.isFavorite,
-      }),
-    );
-         final newProduct = Product(
-          id: json.decode(response.body)['name'],    //DateTime.now().toString(),
+  Future<void> addProduct(Product product) async {
+    try {
+      final response = await http.post(
+        //Working Code
+        Uri.parse(
+            'https://shopapp-e73fe-default-rtdb.asia-southeast1.firebasedatabase.app/products.json'),
+        body: jsonEncode(<String, dynamic>{
+          'title': product.title,
+          'description': product.description,
+          'price': product.price,
+          'imageUrl': product.imageUrl,
+          'isFavorite': product.isFavorite,
+        }),
+      );
+      final newProduct = Product(
+          id: json.decode(response.body)['name'], //DateTime.now().toString(),
           title: product.title,
           description: product.description,
           price: product.price,
@@ -105,56 +103,67 @@ class ProductsProvider with ChangeNotifier {
       // _items.insert(0, newProduct); // add at the start ot the list
 
       notifyListeners();
-
-    } catch(error){
-     
+    } catch (error) {
       rethrow;
     }
-      
-      //After surver is correctly respond
-     // print(json.decode(response.body));
 
+    //After surver is correctly respond
+    // print(json.decode(response.body));
   }
 
   //Fetching data from the server
-  Future<void>dataFromTheServer() async{
-     try{ 
-       final response = await http.get(Uri.parse('https://shopapp-e73fe-default-rtdb.asia-southeast1.firebasedatabase.app/products.json'),);
-       final extractData = jsonDecode(response.body) as Map<String, dynamic>;
-       final List<Product> loadedProducts =[];
-      
+  Future<void> dataFromTheServer() async {
+    try {
+      final response = await http.get(
+        Uri.parse(
+            'https://shopapp-e73fe-default-rtdb.asia-southeast1.firebasedatabase.app/products.json'),
+      );
+      final extractData = jsonDecode(response.body) as Map<String, dynamic>;
+      final List<Product> loadedProducts = [];
 
-       extractData.forEach((productId, productData){
-              loadedProducts.add(
-                  Product(
-                      id: productId, 
-                      title: productData['title'], 
-                      description:productData['description'] , 
-                      price: productData['price'], 
-                      isFavorite: productData['isFavorite'] ,
-                      imageUrl:productData['imageUrl'],
-                      ),
-                );
-       });
-       //After extracted Data/loading the product
-       _items = loadedProducts;
-       notifyListeners();
+      extractData.forEach((productId, productData) {
+        loadedProducts.add(
+          Product(
+            id: productId,
+            title: productData!['title'],
+            description: productData['description'],
+            price: productData['price'],
+            isFavorite: productData['isFavorite'],
+            imageUrl: productData['imageUrl'],
+          ),
+        );
+      });
+      //After extracted Data/loading the product
+      _items = loadedProducts;
+      notifyListeners();
       // print(extractData);
-       }catch(error){
-         rethrow;
-       }
-      
+    } catch (e) {
+      print(e);
+      throw e;
+    }
   }
 
   //Update Product
-  void updateProduct(String id, Product newProduct) {
+  Future<void> updateProduct(String id, Product newProduct) async {
     final productIndex = _items.indexWhere((product) => product.id == id);
 
     if (productIndex >= 0) {
+      await http.patch(
+        Uri.parse(
+            'https://shopapp-e73fe-default-rtdb.asia-southeast1.firebasedatabase.app/products.json'),
+        body: jsonEncode(
+          <String, dynamic>{
+            'title': newProduct.title,
+            'description': newProduct.description,
+            'price': newProduct.price,
+            'imageUrl': newProduct.imageUrl,
+          },
+        ),
+      );
       _items[productIndex] = newProduct;
       notifyListeners();
     } else {
-      // print('.......');
+      print('.......');
     }
   }
 
