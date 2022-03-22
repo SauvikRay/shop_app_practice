@@ -3,6 +3,7 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
+import 'package:shop_app_practice/models/http_exceptions.dart';
 import 'package:shop_app_practice/provider/product.dart';
 import 'package:http/http.dart' as http;
 
@@ -103,7 +104,7 @@ class ProductsProvider with ChangeNotifier {
       // _items.insert(0, newProduct); // add at the start ot the list
 
       notifyListeners();
-    } catch (error) {
+    } catch (e) {
       rethrow;
     }
 
@@ -125,7 +126,7 @@ class ProductsProvider with ChangeNotifier {
         loadedProducts.add(
           Product(
             id: productId,
-            title: productData!['title'],
+            title: productData['title'],
             description: productData['description'],
             price: productData['price'],
             isFavorite: productData['isFavorite'],
@@ -138,8 +139,7 @@ class ProductsProvider with ChangeNotifier {
       notifyListeners();
       // print(extractData);
     } catch (e) {
-      print(e);
-      throw e;
+      rethrow;
     }
   }
 
@@ -150,13 +150,13 @@ class ProductsProvider with ChangeNotifier {
     if (productIndex >= 0) {
       await http.patch(
         Uri.parse(
-            'https://shopapp-e73fe-default-rtdb.asia-southeast1.firebasedatabase.app/products.json'),
+            'https://shopapp-e73fe-default-rtdb.asia-southeast1.firebasedatabase.app/products/$id.json'),
         body: jsonEncode(
           <String, dynamic>{
             'title': newProduct.title,
             'description': newProduct.description,
-            'price': newProduct.price,
             'imageUrl': newProduct.imageUrl,
+            'price': newProduct.price,
           },
         ),
       );
@@ -169,9 +169,24 @@ class ProductsProvider with ChangeNotifier {
 
   //Delete Product
 
-  void deleteProduct(String id) {
-    _items.removeWhere((product) => product.id == id);
-
+ Future <void> deleteProduct(String id) async{
+    //Find the index of the product
+    final existingProductIndex =
+        _items.indexWhere((product) => product.id == id);
+    Product? existingProduct = _items[existingProductIndex];
+    _items.removeAt(existingProductIndex);
+    //If its faild to delete product we need to re inserted in the list
     notifyListeners();
+    // _items.removeWhere((product) => product.id == id);
+   final response = await http.delete(
+      Uri.parse(
+          'https://shopapp-e73fe-default-rtdb.asia-southeast1.firebasedatabase.app/products/$id.json'),
+      );
+      if(response.statusCode >=400){
+      _items.insert(existingProductIndex, existingProduct);
+      notifyListeners();
+          throw HttpException('Could not delete product');
+      }
+      existingProduct = null;     
   }
 }

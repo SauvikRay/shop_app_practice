@@ -14,7 +14,7 @@ class CartScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-  final cart= Provider.of<Cart>(context);
+  final cart= Provider.of<Cart>(context,listen: false);
 
     return SafeArea(
       child: Scaffold(
@@ -35,16 +35,19 @@ class CartScreen extends StatelessWidget {
                  label: Text('\$${cart.totalAmount.toStringAsFixed(2)}',style:const TextStyle(color:Colors.white,),),
                  backgroundColor: Colors.deepPurple,
                ),
-               TextButton(
+               // CartItem Count ==0 then remove the order now button
+               (cart.itemCount == 0)?
+                  Container() : TextButton(
                  child:const Text('ORDER NOW',style: TextStyle(color:Colors.indigoAccent,fontWeight: FontWeight.bold),),
                  onPressed: (){
                    Provider.of<Orders>(context,listen: false).addOrder(cart.items.values.toList(), cart.totalAmount);
                    cart.crearCard();
-                 }, ),
+                 }, 
+                 )  
               ] ,),
             ),
             ),
-          //Card For Items
+          //Card For Order Items
           Expanded(child: ListView.builder(
             itemCount: cart.items.length,
             itemBuilder: (ctx,index){

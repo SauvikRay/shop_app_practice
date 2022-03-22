@@ -17,6 +17,7 @@ class UserProductItem extends StatelessWidget {
   Widget build(BuildContext context) {
      
     Future<void> _showDialog() async {
+     
       return showDialog(
           context: context,
           builder: (BuildContext context) {
@@ -34,8 +35,16 @@ class UserProductItem extends StatelessWidget {
               actions: <Widget>[
                 TextButton(
                   child: const Text('YES'),
-                  onPressed: () {
-                   Provider.of<ProductsProvider>(context, listen: false).deleteProduct(id);
+                  onPressed: ()async {
+                        try {
+                          await Provider.of<ProductsProvider>(context, listen: false).deleteProduct(id);
+                            }catch(e){
+                               const snackBar =   SnackBar(
+                                 content: Text('Deleting failed'),
+                                 );
+                             ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                              rethrow;
+                            }
                    Navigator.of(context).pop();
                   },
                 ),
