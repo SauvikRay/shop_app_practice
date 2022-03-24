@@ -119,8 +119,11 @@ class ProductsProvider with ChangeNotifier {
         Uri.parse(
             'https://shopapp-e73fe-default-rtdb.asia-southeast1.firebasedatabase.app/products.json'),
       );
-      final extractData = jsonDecode(response.body) as Map<String, dynamic>;
+      final extractData = jsonDecode(response.body) as Map<String, dynamic>?;
       final List<Product> loadedProducts = [];
+      if (extractData == null) {
+        return;
+      }
 
       extractData.forEach((productId, productData) {
         loadedProducts.add(
@@ -169,7 +172,7 @@ class ProductsProvider with ChangeNotifier {
 
   //Delete Product
 
- Future <void> deleteProduct(String id) async{
+  Future<void> deleteProduct(String id) async {
     //Find the index of the product
     final existingProductIndex =
         _items.indexWhere((product) => product.id == id);
@@ -178,15 +181,15 @@ class ProductsProvider with ChangeNotifier {
     //If its faild to delete product we need to re inserted in the list
     notifyListeners();
     // _items.removeWhere((product) => product.id == id);
-   final response = await http.delete(
+    final response = await http.delete(
       Uri.parse(
           'https://shopapp-e73fe-default-rtdb.asia-southeast1.firebasedatabase.app/products/$id.json'),
-      );
-      if(response.statusCode >=400){
+    );
+    if (response.statusCode >= 400) {
       _items.insert(existingProductIndex, existingProduct);
       notifyListeners();
-          throw HttpException('Could not delete product');
-      }
-      existingProduct = null;     
+      throw HttpException('Could not delete product');
+    }
+    existingProduct = null;
   }
 }

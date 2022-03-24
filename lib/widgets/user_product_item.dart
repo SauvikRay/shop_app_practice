@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 import 'package:shop_app_practice/provider/products_provide.dart';
 import 'package:shop_app_practice/screens/edit_product_screen.dart';
 
-
 class UserProductItem extends StatelessWidget {
   final String id;
   final String title;
@@ -15,9 +14,7 @@ class UserProductItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-     
     Future<void> _showDialog() async {
-     
       return showDialog(
           context: context,
           builder: (BuildContext context) {
@@ -28,24 +25,25 @@ class UserProductItem extends StatelessWidget {
                   children: const <Widget>[
                     Text('If you want to remove this item press"YES"'),
                     Text('If you want to keep this item press"NO"'),
-                  
                   ],
                 ),
               ),
               actions: <Widget>[
                 TextButton(
                   child: const Text('YES'),
-                  onPressed: ()async {
-                        try {
-                          await Provider.of<ProductsProvider>(context, listen: false).deleteProduct(id);
-                            }catch(e){
-                               const snackBar =   SnackBar(
-                                 content: Text('Deleting failed'),
-                                 );
-                             ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                              rethrow;
-                            }
-                   Navigator.of(context).pop();
+                  onPressed: () async {
+                    try {
+                      await Provider.of<ProductsProvider>(context,
+                              listen: false)
+                          .deleteProduct(id);
+                    } catch (e) {
+                      const snackBar = SnackBar(
+                        content: Text('Deleting failed'),
+                      );
+                      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                      rethrow;
+                    }
+                    Navigator.of(context).pop();
                   },
                 ),
                 TextButton(
@@ -80,7 +78,7 @@ class UserProductItem extends StatelessWidget {
             ),
             IconButton(
               onPressed: () {
-               _showDialog();
+                _showDialog();
               },
               icon: const Icon(
                 Icons.delete,
