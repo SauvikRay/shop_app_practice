@@ -9,6 +9,7 @@ import './screens/products_overview_screen.dart';
 import './screens/product_detail_screen.dart';
 import './provider/cart.dart';
 import './provider/products_provide.dart';
+import 'screens/auth_screen.dart';
 
 void main() => runApp(
       MultiProvider(
@@ -39,13 +40,16 @@ class MyApp extends StatelessWidget {
         primaryColor: Colors.deepOrange,
         fontFamily: 'Lato',
       ),
-      home: const ProductsOverviewScreen(),
+      home: const AuthScreen(),
       routes: {
         ProductDetailScreen.routeName: (contx) => const ProductDetailScreen(),
         CartScreen.routeName: (contx) => const CartScreen(),
         OrdersScreen.routeName: (contx) => const OrdersScreen(),
         UserProductScreen.routeName: (context)=>const UserProductScreen(),
         EditProdductScreen.routename:(context) => const EditProdductScreen(),
+        AuthScreen.routename:(context) => const AuthScreen(),
+
+
       },
     );
   }

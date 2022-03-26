@@ -55,49 +55,47 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Text('MyShop'),
-          actions: <Widget>[
-            PopupMenuButton(
-                icon: const Icon(Icons.more_vert),
-                onSelected: (FilterOption selectedValue) {
-                  //print(selectedValue);
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('MyShop'),
+        actions: <Widget>[
+          PopupMenuButton(
+              icon: const Icon(Icons.more_vert),
+              onSelected: (FilterOption selectedValue) {
+                //print(selectedValue);
 
-                  setState(() {
-                    if (selectedValue == FilterOption.favourites) {
-                      _showOnlyFavorites = true;
-                    } else {
-                      _showOnlyFavorites = false;
-                    }
-                  });
-                },
-                itemBuilder: (_) => [
-                      const PopupMenuItem(
-                        child: Text('Only Favorites'),
-                        value: FilterOption.favourites,
-                      ),
-                      const PopupMenuItem(
-                        child: Text('Show All'),
-                        value: FilterOption.all,
-                      ),
-                    ]),
-            Consumer<Cart>( 
-              builder:(_, cartData, child) 
-                    {return Badge(
-                            child: child!,
-                            value: cartData.itemCount.toString(),
-                            );
-                    },
-              child: IconButton(icon:const Icon( Icons.shopping_cart),onPressed: (){
-                Navigator.pushNamed(context, CartScreen.routeName);
-              },),) ,  //child: IconButton(icon:const Icon( Icons.shopping_cart),onPressed: (){},),)),),
-          ],
-        ),
-        drawer:const AppDrawer(),
-        body: _isLoadding? const Center(child: CircularProgressIndicator(color: Colors.pink,),) : ProductGrid(showOnlyFavorites: _showOnlyFavorites),
+                setState(() {
+                  if (selectedValue == FilterOption.favourites) {
+                    _showOnlyFavorites = true;
+                  } else {
+                    _showOnlyFavorites = false;
+                  }
+                });
+              },
+              itemBuilder: (_) => [
+                    const PopupMenuItem(
+                      child: Text('Only Favorites'),
+                      value: FilterOption.favourites,
+                    ),
+                    const PopupMenuItem(
+                      child: Text('Show All'),
+                      value: FilterOption.all,
+                    ),
+                  ]),
+          Consumer<Cart>( 
+            builder:(_, cartData, child) 
+                  {return Badge(
+                          child: child!,
+                          value: cartData.itemCount.toString(),
+                          );
+                  },
+            child: IconButton(icon:const Icon( Icons.shopping_cart),onPressed: (){
+              Navigator.pushNamed(context, CartScreen.routeName);
+            },),) ,  //child: IconButton(icon:const Icon( Icons.shopping_cart),onPressed: (){},),)),),
+        ],
       ),
+      drawer:const AppDrawer(),
+      body: _isLoadding? const Center(child: CircularProgressIndicator(color: Colors.pink,),) : ProductGrid(showOnlyFavorites: _showOnlyFavorites),
     );
   }
 }
