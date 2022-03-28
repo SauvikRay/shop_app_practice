@@ -40,16 +40,14 @@ class MyApp extends StatelessWidget {
         primaryColor: Colors.deepOrange,
         fontFamily: 'Lato',
       ),
-      home: const AuthScreen(),
+      home: const AuthScreen(), // ProductsOverviewScreen(),
       routes: {
         ProductDetailScreen.routeName: (contx) => const ProductDetailScreen(),
         CartScreen.routeName: (contx) => const CartScreen(),
         OrdersScreen.routeName: (contx) => const OrdersScreen(),
-        UserProductScreen.routeName: (context)=>const UserProductScreen(),
-        EditProdductScreen.routename:(context) => const EditProdductScreen(),
-        AuthScreen.routename:(context) => const AuthScreen(),
-
-
+        UserProductScreen.routeName: (context) => const UserProductScreen(),
+        EditProdductScreen.routename: (context) => const EditProdductScreen(),
+        AuthScreen.routename: (context) => const AuthScreen(),
       },
     );
   }
