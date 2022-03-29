@@ -6,11 +6,11 @@ import 'package:shop_app_practice/screens/cart_screen.dart';
 import 'package:shop_app_practice/screens/edit_product_screen.dart';
 import 'package:shop_app_practice/screens/orders_screen.dart';
 import 'package:shop_app_practice/screens/user_products_screen.dart';
-import './screens/products_overview_screen.dart';
 import './screens/product_detail_screen.dart';
 import './provider/cart.dart';
 import './provider/products_provide.dart';
 import './screens/auth_screen.dart';
+import 'screens/products_overview_screen.dart';
 
 void main() => runApp(
       MultiProvider(
@@ -18,8 +18,13 @@ void main() => runApp(
           ChangeNotifierProvider(
             create: (BuildContext context) => Auth(),
           ), 
-          ChangeNotifierProvider(
-            create: (BuildContext context) => ProductsProvider(),
+          ChangeNotifierProxyProvider<Auth, ProductsProvider>(
+         create: (_) =>ProductsProvider() ,
+          
+
+          update: ( context, auth, previousProducts) => ProductsProvider(auth.token!,previousProducts!.items),
+           
+           
           ),
           ChangeNotifierProvider(
             create: (BuildContext context) => Cart(),
@@ -28,15 +33,8 @@ void main() => runApp(
             create: (BuildContext context) => Orders(),
           ),
         ],
-        child: const MyApp(),
-      ),
-    );
-
-class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
+        child:  Consumer<Auth>(builder:(context, auth,_) {
+          return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'MyShop',
       theme: ThemeData(
@@ -44,8 +42,10 @@ class MyApp extends StatelessWidget {
         primaryColor: Colors.deepOrange,
         fontFamily: 'Lato',
       ),
-      home: const AuthScreen(), // ProductsOverviewScreen(),
+      home:auth.isAuth ?  ProductsOverviewScreen() : const AuthScreen(), // ProductsOverviewScreen(),
       routes: {
+
+        ProductsOverviewScreen.routeName: (contx) => const ProductsOverviewScreen(),
         ProductDetailScreen.routeName: (contx) => const ProductDetailScreen(),
         CartScreen.routeName: (contx) => const CartScreen(),
         OrdersScreen.routeName: (contx) => const OrdersScreen(),
@@ -54,5 +54,9 @@ class MyApp extends StatelessWidget {
         AuthScreen.routename: (context) => const AuthScreen(),
       },
     );
-  }
-}
+  
+  
+        },)  ,
+      ),
+    );
+

@@ -8,6 +8,10 @@ import 'package:shop_app_practice/provider/product.dart';
 import 'package:http/http.dart' as http;
 
 class ProductsProvider with ChangeNotifier {
+  final String authToken;
+
+  ProductsProvider( this.authToken,this._items,);
+
   List<Product> _items = [
     // Product(
     //   id: 'p1',
@@ -42,6 +46,8 @@ class ProductsProvider with ChangeNotifier {
     //       'https://upload.wikimedia.org/wikipedia/commons/thumb/1/14/Cast-Iron-Pan.jpg/1024px-Cast-Iron-Pan.jpg',
     // ),
   ];
+
+
 
   // var _showFavoritesOnly = false;
 
@@ -117,7 +123,7 @@ class ProductsProvider with ChangeNotifier {
     try {
       final response = await http.get(
         Uri.parse(
-            'https://shopapp-e73fe-default-rtdb.asia-southeast1.firebasedatabase.app/products.json'),
+            'https://shopapp-e73fe-default-rtdb.asia-southeast1.firebasedatabase.app/products.json? auth =$authToken'),
       );
       final extractData = jsonDecode(response.body) as Map<String, dynamic>?;
       final List<Product> loadedProducts = [];
