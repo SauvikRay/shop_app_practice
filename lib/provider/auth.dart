@@ -8,7 +8,7 @@ import 'package:shop_app_practice/models/http_exceptions.dart';
 import '../constant/constant.dart';
 
 class Auth with ChangeNotifier {
-  String? _token;
+ late String? _token;
   //String? _userId;
   DateTime? _expireDate;
 

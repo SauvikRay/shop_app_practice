@@ -18,12 +18,12 @@ void main() => runApp(
           ChangeNotifierProvider(
             create: (BuildContext context) => Auth(),
           ), 
-          ChangeNotifierProxyProvider<Auth, ProductsProvider>(
-         create: (_) =>ProductsProvider() ,
-          
-
-          update: ( context, auth, previousProducts) => ProductsProvider(auth.token!,previousProducts!.items),
+         ChangeNotifierProxyProvider<Auth, ProductsProvider>(
            
+
+        create: (_) =>ProductsProvider('',[]) ,
+          update: ( context, auth, previousProducts) => ProductsProvider(auth.token!,previousProducts!.items == [] ? [] : previousProducts.items),
+                                                                                                              //null
            
           ),
           ChangeNotifierProvider(
@@ -33,8 +33,8 @@ void main() => runApp(
             create: (BuildContext context) => Orders(),
           ),
         ],
-        child:  Consumer<Auth>(builder:(context, auth,_) {
-          return MaterialApp(
+        child:  Consumer<Auth>(builder:(context, auth,_) =>
+           MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'MyShop',
       theme: ThemeData(
@@ -53,10 +53,10 @@ void main() => runApp(
         EditProdductScreen.routename: (context) => const EditProdductScreen(),
         AuthScreen.routename: (context) => const AuthScreen(),
       },
-    );
+    ),
   
   
-        },)  ,
+        )  ,
       ),
     );
 

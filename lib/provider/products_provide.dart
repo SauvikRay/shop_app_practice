@@ -8,7 +8,7 @@ import 'package:shop_app_practice/provider/product.dart';
 import 'package:http/http.dart' as http;
 
 class ProductsProvider with ChangeNotifier {
-  final String authToken;
+   String authToken;
 
   ProductsProvider( this.authToken,this._items,);
 
