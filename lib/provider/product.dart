@@ -24,14 +24,14 @@ class Product with ChangeNotifier {
     isFavorite = newValue;
   }
 
-  Future<void> toogleFavouriteStatus() async {
+  Future<void> toogleFavouriteStatus(String token,String userId,) async {
     final oldStatus = isFavorite;
     isFavorite = !isFavorite;
     notifyListeners();
     try {
-      final response = await http.patch(
+      final response = await http.put(
         Uri.parse(
-            'https://shopapp-e73fe-default-rtdb.asia-southeast1.firebasedatabase.app/products/$id.json'),
+            'https://shopapp-e73fe-default-rtdb.asia-southeast1.firebasedatabase.app/userFevourites/$userId/$id.json?auth=$token'),
         body: jsonEncode({
           'isFavorite': isFavorite,
         }),

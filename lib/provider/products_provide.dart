@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:async';
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:shop_app_practice/models/http_exceptions.dart';
@@ -8,9 +7,14 @@ import 'package:shop_app_practice/provider/product.dart';
 import 'package:http/http.dart' as http;
 
 class ProductsProvider with ChangeNotifier {
-   String authToken;
+  String authToken;
+  String userId;
 
-  ProductsProvider( this.authToken,this._items,);
+  ProductsProvider(
+    this.authToken,
+    this.userId,
+    this._items,
+  );
 
   List<Product> _items = [
     // Product(
@@ -46,8 +50,6 @@ class ProductsProvider with ChangeNotifier {
     //       'https://upload.wikimedia.org/wikipedia/commons/thumb/1/14/Cast-Iron-Pan.jpg/1024px-Cast-Iron-Pan.jpg',
     // ),
   ];
-
-
 
   // var _showFavoritesOnly = false;
 
@@ -91,13 +93,13 @@ class ProductsProvider with ChangeNotifier {
       final response = await http.post(
         //Working Code
         Uri.parse(
-            'https://shopapp-e73fe-default-rtdb.asia-southeast1.firebasedatabase.app/products.json'),
+            'https://shopapp-e73fe-default-rtdb.asia-southeast1.firebasedatabase.app/products.json?auth=$authToken'),
         body: jsonEncode(<String, dynamic>{
           'title': product.title,
           'description': product.description,
           'price': product.price,
           'imageUrl': product.imageUrl,
-          'isFavorite': product.isFavorite,
+          // 'isFavorite': product.isFavorite,
         }),
       );
       final newProduct = Product(
@@ -121,15 +123,24 @@ class ProductsProvider with ChangeNotifier {
   //Fetching data from the server
   Future<void> dataFromTheServer() async {
     try {
+      var url =
+          'https://shopapp-e73fe-default-rtdb.asia-southeast1.firebasedatabase.app/products.json?auth=$authToken';
       final response = await http.get(
-        Uri.parse(
-            'https://shopapp-e73fe-default-rtdb.asia-southeast1.firebasedatabase.app/products.json? auth =$authToken'),
+        Uri.parse(url),
       );
       final extractData = jsonDecode(response.body) as Map<String, dynamic>?;
+
       final List<Product> loadedProducts = [];
       if (extractData == null) {
         return;
       }
+
+      url =
+          'https://shopapp-e73fe-default-rtdb.asia-southeast1.firebasedatabase.app/userFevourites/$userId.json?auth=$authToken';
+      final favoriteResponse = await http.get(Uri.parse(url));
+      final favoriteData = jsonDecode(favoriteResponse.body);
+    
+      // print(favoriteData);
 
       extractData.forEach((productId, productData) {
         loadedProducts.add(
@@ -137,8 +148,10 @@ class ProductsProvider with ChangeNotifier {
             id: productId,
             title: productData['title'],
             description: productData['description'],
-            price: productData['price'],
-            isFavorite: productData['isFavorite'],
+            price: productData['price'], //double.parse( productData['price']),
+            isFavorite: favoriteData == null
+                ? false
+                : favoriteData[productId] ?? false,  //Error Line.. need to solvable
             imageUrl: productData['imageUrl'],
           ),
         );
@@ -148,6 +161,7 @@ class ProductsProvider with ChangeNotifier {
       notifyListeners();
       // print(extractData);
     } catch (e) {
+      //  log(e.toString());
       rethrow;
     }
   }
@@ -159,7 +173,7 @@ class ProductsProvider with ChangeNotifier {
     if (productIndex >= 0) {
       await http.patch(
         Uri.parse(
-            'https://shopapp-e73fe-default-rtdb.asia-southeast1.firebasedatabase.app/products/$id.json'),
+            'https://shopapp-e73fe-default-rtdb.asia-southeast1.firebasedatabase.app/products/$id.json?auth=$authToken'),
         body: jsonEncode(
           <String, dynamic>{
             'title': newProduct.title,
@@ -189,7 +203,7 @@ class ProductsProvider with ChangeNotifier {
     // _items.removeWhere((product) => product.id == id);
     final response = await http.delete(
       Uri.parse(
-          'https://shopapp-e73fe-default-rtdb.asia-southeast1.firebasedatabase.app/products/$id.json'),
+          'https://shopapp-e73fe-default-rtdb.asia-southeast1.firebasedatabase.app/products/$id.json?auth=$authToken'),
     );
     if (response.statusCode >= 400) {
       _items.insert(existingProductIndex, existingProduct);

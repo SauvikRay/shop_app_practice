@@ -17,24 +17,65 @@ void main() => runApp(
         providers: [
           ChangeNotifierProvider(
             create: (BuildContext context) => Auth(),
-          ), 
-         ChangeNotifierProxyProvider<Auth, ProductsProvider>(
-           
-
-        create: (_) =>ProductsProvider('',[]) ,
-          update: ( context, auth, previousProducts) => ProductsProvider(auth.token!,previousProducts!.items == [] ? [] : previousProducts.items),
-                                                                                                              //null
-           
+          ),
+          ChangeNotifierProxyProvider<Auth, ProductsProvider>(
+            create: (_) => ProductsProvider('', '',[]),
+            update: (context, auth, previousProducts) => ProductsProvider(
+                auth.token!,
+                auth.userId,
+                previousProducts!.items == [] ? [] : previousProducts.items),
+            //null
           ),
           ChangeNotifierProvider(
             create: (BuildContext context) => Cart(),
           ),
-          ChangeNotifierProvider(
-            create: (BuildContext context) => Orders(),
+          ChangeNotifierProxyProvider<Auth,Orders>(
+            create: (_) => Orders('',[]),
+            update: (context,auth,previousOrder)=> Orders(auth.token!, previousOrder!.orders == [] ? [] : previousOrder.orders),
           ),
         ],
-        child:  Consumer<Auth>(builder:(context, auth,_) =>
-           MaterialApp(
+        child: Consumer<Auth>(
+          builder: (context, auth, _) => MyApp(auth.isAuth),
+          // Consumer<Auth>(
+          //   builder: (context, auth, _) => MyApp(),
+          //   //  MaterialApp(
+          //   //   debugShowCheckedModeBanner: false,
+          //   //   title: 'MyShop',
+          //   //   theme: ThemeData(
+          //   //     primarySwatch: Colors.purple,
+          //   //     primaryColor: Colors.deepOrange,
+          //   //     fontFamily: 'Lato',
+          //   //   ),
+          //   //   home: auth.isAuth
+          //   //       ? ProductsOverviewScreen()
+          //   //       : const AuthScreen(), // ProductsOverviewScreen(),
+          //   //   routes: {
+          //   //     ProductsOverviewScreen.routeName: (contx) =>
+          //   //         const ProductsOverviewScreen(),
+          //   //     ProductDetailScreen.routeName: (contx) =>
+          //   //         const ProductDetailScreen(),
+          //   //     CartScreen.routeName: (contx) => const CartScreen(),
+          //   //     OrdersScreen.routeName: (contx) => const OrdersScreen(),
+          //   //     UserProductScreen.routeName: (context) =>
+          //   //         const UserProductScreen(),
+          //   //     EditProdductScreen.routename: (context) =>
+          //   //         const EditProdductScreen(),
+          //   //     AuthScreen.routename: (context) => const AuthScreen(),
+          //   //   },
+          //   // ),
+
+          // ),
+        ),
+      ),
+    );
+
+class MyApp extends StatelessWidget {
+  MyApp(this.myAuth);
+  bool myAuth;
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'MyShop',
       theme: ThemeData(
@@ -42,10 +83,12 @@ void main() => runApp(
         primaryColor: Colors.deepOrange,
         fontFamily: 'Lato',
       ),
-      home:auth.isAuth ?  ProductsOverviewScreen() : const AuthScreen(), // ProductsOverviewScreen(),
+      home: myAuth
+          ? ProductsOverviewScreen()
+          : const AuthScreen(), // ProductsOverviewScreen(),
       routes: {
-
-        ProductsOverviewScreen.routeName: (contx) => const ProductsOverviewScreen(),
+        ProductsOverviewScreen.routeName: (contx) =>
+            const ProductsOverviewScreen(),
         ProductDetailScreen.routeName: (contx) => const ProductDetailScreen(),
         CartScreen.routeName: (contx) => const CartScreen(),
         OrdersScreen.routeName: (contx) => const OrdersScreen(),
@@ -53,10 +96,6 @@ void main() => runApp(
         EditProdductScreen.routename: (context) => const EditProdductScreen(),
         AuthScreen.routename: (context) => const AuthScreen(),
       },
-    ),
-  
-  
-        )  ,
-      ),
     );
-
+  }
+}

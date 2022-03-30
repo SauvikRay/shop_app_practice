@@ -20,6 +20,9 @@ class OrderItem {
 }
 
 class Orders with ChangeNotifier {
+  Orders(this.authToken,this._orders);
+  final String authToken;
+
   List<OrderItem> _orders = [];
 
   List<OrderItem> get orders {
@@ -31,7 +34,7 @@ class Orders with ChangeNotifier {
     final response = await http.post(
       //Working Code
       Uri.parse(
-          'https://shopapp-e73fe-default-rtdb.asia-southeast1.firebasedatabase.app/orders.json'),
+          'https://shopapp-e73fe-default-rtdb.asia-southeast1.firebasedatabase.app/orders.json?auth=$authToken'),
       body: jsonEncode({
         'amount': total,
         'dateTime': timeStamp.toIso8601String(),
@@ -61,7 +64,7 @@ class Orders with ChangeNotifier {
   Future<void> fetchAndSetOrders() async {
     final response = await http.get(
       Uri.parse(
-          'https://shopapp-e73fe-default-rtdb.asia-southeast1.firebasedatabase.app/orders.json'),
+          'https://shopapp-e73fe-default-rtdb.asia-southeast1.firebasedatabase.app/orders.json?auth=$authToken'),
     );
     final List<OrderItem> loadedOrders = [];
     final extractedOrder = jsonDecode(response.body) as Map<String, dynamic>?;

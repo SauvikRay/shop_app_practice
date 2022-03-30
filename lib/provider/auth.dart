@@ -8,9 +8,14 @@ import 'package:shop_app_practice/models/http_exceptions.dart';
 import '../constant/constant.dart';
 
 class Auth with ChangeNotifier {
- late String? _token;
-  //String? _userId;
+  late String? _token;
+ late String _userId;
   DateTime? _expireDate;
+
+  //get the userId
+  String get userId {
+    return _userId;
+  }
 
   //checking the expire date
   String? get token {
@@ -50,7 +55,7 @@ class Auth with ChangeNotifier {
       }
       //if not erroe occured
       _token = responseDdata['idToken'];
-      //_userId = responseDdata['localId'];
+      _userId = responseDdata['localId'];
       _expireDate = DateTime.now()
           .add(Duration(seconds: int.parse(responseDdata['expiresIn'])));
 

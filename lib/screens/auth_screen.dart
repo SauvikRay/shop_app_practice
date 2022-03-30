@@ -1,10 +1,7 @@
 import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shop_app_practice/models/http_exceptions.dart';
-import 'package:shop_app_practice/screens/products_overview_screen.dart';
-
 import '../provider/auth.dart';
 
 enum AuthMode { signup, login }
@@ -149,8 +146,6 @@ class _AuthCardState extends State<AuthCard> {
           _authData['password']!,
         );
       }
-
-      
     } on HttpException catch (e) {
       var errorMessage = 'Authentication failed';
       if (e.toString().contains('EMAIL_EXISTS')) {
