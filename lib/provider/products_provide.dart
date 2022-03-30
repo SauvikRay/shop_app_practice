@@ -7,8 +7,10 @@ import 'package:shop_app_practice/provider/product.dart';
 import 'package:http/http.dart' as http;
 
 class ProductsProvider with ChangeNotifier {
-  String authToken;
-  String userId;
+
+  
+  String? authToken;
+  String? userId;
 
   ProductsProvider(
     this.authToken,
@@ -121,16 +123,16 @@ class ProductsProvider with ChangeNotifier {
   }
 
   //Fetching data from the server
-  Future<void> dataFromTheServer() async {
-    try {
+  Future<void> dataFromTheServer([bool filterByUser = false]) async {
+    final filterString = filterByUser ? 'orderBy="creatorId"&equalTo="$userId"' : '';
       var url =
-          'https://shopapp-e73fe-default-rtdb.asia-southeast1.firebasedatabase.app/products.json?auth=$authToken';
+          'https://shopapp-e73fe-default-rtdb.asia-southeast1.firebasedatabase.app/products.json?auth=$authToken&$filterString';
+    try {
       final response = await http.get(
         Uri.parse(url),
       );
-      final extractData = jsonDecode(response.body) as Map<String, dynamic>?;
 
-      final List<Product> loadedProducts = [];
+      final extractData = jsonDecode(response.body) as Map<String, dynamic>?;
       if (extractData == null) {
         return;
       }
@@ -138,21 +140,22 @@ class ProductsProvider with ChangeNotifier {
       url =
           'https://shopapp-e73fe-default-rtdb.asia-southeast1.firebasedatabase.app/userFevourites/$userId.json?auth=$authToken';
       final favoriteResponse = await http.get(Uri.parse(url));
-      final favoriteData = jsonDecode(favoriteResponse.body);
-    
-      // print(favoriteData);
+      final favoriteData = jsonDecode(favoriteResponse.body)as Map<String,dynamic>?;
+      
 
+      print(favoriteData);
+
+      final List<Product> loadedProducts = [];
       extractData.forEach((productId, productData) {
         loadedProducts.add(
           Product(
             id: productId,
             title: productData['title'],
             description: productData['description'],
-            price: productData['price'], //double.parse( productData['price']),
-            isFavorite: favoriteData == null
-                ? false
-                : favoriteData[productId] ?? false,  //Error Line.. need to solvable
+            price: productData['price']
+                as double, //double.parse( productData['price']),
             imageUrl: productData['imageUrl'],
+            isFavorite: (favoriteData == null ? false : favoriteData[productId] ?? false)as bool,  //Error Line.. need to solvable
           ),
         );
       });
@@ -213,3 +216,6 @@ class ProductsProvider with ChangeNotifier {
     existingProduct = null;
   }
 }
+
+
+//https://github.com/lastra-dev/flutter-shop-app/blob/master/lib/providers/products.dart

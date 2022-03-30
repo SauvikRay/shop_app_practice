@@ -39,6 +39,7 @@ class Product with ChangeNotifier {
       if (response.statusCode >= 400) {
         _setFavValue(oldStatus);
       }
+      // notifyListeners();
     } catch (e) {
       _setFavValue(oldStatus);
     }
