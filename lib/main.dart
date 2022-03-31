@@ -19,7 +19,7 @@ void main() => runApp(
             create: (BuildContext context) => Auth(),
           ),
           ChangeNotifierProxyProvider<Auth, ProductsProvider>(
-            create: (_) => ProductsProvider('', '',[]),
+            create: (_) => ProductsProvider('', '', []),
             update: (context, auth, previousProducts) => ProductsProvider(
                 auth.token!,
                 auth.userId,
@@ -29,9 +29,10 @@ void main() => runApp(
           ChangeNotifierProvider(
             create: (BuildContext context) => Cart(),
           ),
-          ChangeNotifierProxyProvider<Auth,Orders>(
-            create: (_) => Orders('',[]),
-            update: (context,auth,previousOrder)=> Orders(auth.token!, previousOrder!.orders == [] ? [] : previousOrder.orders),
+          ChangeNotifierProxyProvider<Auth, Orders>(
+            create: (_) => Orders('','' ,[]),
+            update: (context, auth, previousOrder) => Orders(auth.token!, auth.userId,
+                previousOrder!.orders == [] ? [] : previousOrder.orders),
           ),
         ],
         child: Consumer<Auth>(
@@ -70,8 +71,8 @@ void main() => runApp(
     );
 
 class MyApp extends StatelessWidget {
-  MyApp(this.myAuth);
-  bool myAuth;
+ const MyApp(this.myAuth, {Key? key}) : super(key: key);
+  final bool myAuth;
 
   @override
   Widget build(BuildContext context) {
@@ -84,7 +85,7 @@ class MyApp extends StatelessWidget {
         fontFamily: 'Lato',
       ),
       home: myAuth
-          ? ProductsOverviewScreen()
+          ? const ProductsOverviewScreen()
           : const AuthScreen(), // ProductsOverviewScreen(),
       routes: {
         ProductsOverviewScreen.routeName: (contx) =>

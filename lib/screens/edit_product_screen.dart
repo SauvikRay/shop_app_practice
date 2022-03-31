@@ -185,7 +185,7 @@ class _EditProdductScreenState extends State<EditProdductScreen> {
                               description: _editedProduct.description,
                               imageUrl: _editedProduct.imageUrl,
                               id: _editedProduct.id,
-                              isFavorite: _editedProduct.isFavorite);
+                              isFavourite: _editedProduct.isFavourite);
                         },
                       ),
                       TextFormField(
@@ -218,7 +218,7 @@ class _EditProdductScreenState extends State<EditProdductScreen> {
                               description: _editedProduct.description,
                               imageUrl: _editedProduct.imageUrl,
                               id: _editedProduct.id,
-                              isFavorite: _editedProduct.isFavorite);
+                              isFavourite: _editedProduct.isFavourite);
                         },
                       ),
                       TextFormField(
@@ -245,7 +245,7 @@ class _EditProdductScreenState extends State<EditProdductScreen> {
                             description: value!,
                             imageUrl: _editedProduct.imageUrl,
                             id: _editedProduct.id,
-                            isFavorite: _editedProduct.isFavorite,
+                            isFavourite: _editedProduct.isFavourite,
                           );
                         },
                       ),
@@ -299,7 +299,7 @@ class _EditProdductScreenState extends State<EditProdductScreen> {
                                   description: _editedProduct.description,
                                   imageUrl: value!,
                                   id: _editedProduct.id,
-                                  isFavorite: _editedProduct.isFavorite,
+                                  isFavourite: _editedProduct.isFavourite,
                                 );
                               },
                             ),

@@ -9,7 +9,7 @@ class Product with ChangeNotifier {
   final String description;
   final double price;
   final String imageUrl;
-  bool isFavorite;
+  bool isFavourite;
 
   Product({
     required this.id,
@@ -17,24 +17,23 @@ class Product with ChangeNotifier {
     required this.description,
     required this.price,
     required this.imageUrl,
-    this.isFavorite = false,
+    this.isFavourite = false,
   });
 
   void _setFavValue(bool newValue) {
-    isFavorite = newValue;
+    isFavourite = newValue;
   }
 
   Future<void> toogleFavouriteStatus(String token,String userId,) async {
-    final oldStatus = isFavorite;
-    isFavorite = !isFavorite;
+    final oldStatus = isFavourite;
+    isFavourite = !isFavourite;
     notifyListeners();
     try {
       final response = await http.put(
-        Uri.parse(
-            'https://shopapp-e73fe-default-rtdb.asia-southeast1.firebasedatabase.app/userFevourites/$userId/$id.json?auth=$token'),
-        body: jsonEncode({
-          'isFavorite': isFavorite,
-        }),
+        Uri.parse('https://shopapp-e73fe-default-rtdb.asia-southeast1.firebasedatabase.app/userFevourites/$userId/$id.json?auth=$token'),
+        body: jsonEncode(
+          isFavourite,
+        ),
       );
       if (response.statusCode >= 400) {
         _setFavValue(oldStatus);

@@ -7,8 +7,6 @@ import 'package:shop_app_practice/provider/product.dart';
 import 'package:http/http.dart' as http;
 
 class ProductsProvider with ChangeNotifier {
-
-  
   String? authToken;
   String? userId;
 
@@ -57,14 +55,14 @@ class ProductsProvider with ChangeNotifier {
 
   List<Product> get items {
     // if(_showFavoritesOnly){
-    //   return _items.where((element) => element.isFavorite).toList();
+    //   return _items.where((element) => element.isFavourite).toList();
     // }
     return [..._items];
   }
 
 //Filtering the Favorites Item
   List<Product> get favoritesProduct {
-    return _items.where((element) => element.isFavorite).toList();
+    return _items.where((element) => element.isFavourite).toList();
   }
 
 //Filtering the Favorites Item
@@ -101,7 +99,8 @@ class ProductsProvider with ChangeNotifier {
           'description': product.description,
           'price': product.price,
           'imageUrl': product.imageUrl,
-          // 'isFavorite': product.isFavorite,
+          'creatorId': userId, //sending the creator ID when an Item is added.
+          // 'isFavourite': product.isFavourite,
         }),
       );
       final newProduct = Product(
@@ -124,9 +123,11 @@ class ProductsProvider with ChangeNotifier {
 
   //Fetching data from the server
   Future<void> dataFromTheServer([bool filterByUser = false]) async {
-    final filterString = filterByUser ? 'orderBy="creatorId"&equalTo="$userId"' : '';
-      var url =
-          'https://shopapp-e73fe-default-rtdb.asia-southeast1.firebasedatabase.app/products.json?auth=$authToken&$filterString';
+    final filterString = filterByUser
+        ? 'orderBy="creatorId"&equalTo="$userId"'
+        : ''; // From the firebase rules
+    var url =
+        'https://shopapp-e73fe-default-rtdb.asia-southeast1.firebasedatabase.app/products.json?auth=$authToken&$filterString';
     try {
       final response = await http.get(
         Uri.parse(url),
@@ -140,10 +141,9 @@ class ProductsProvider with ChangeNotifier {
       url =
           'https://shopapp-e73fe-default-rtdb.asia-southeast1.firebasedatabase.app/userFevourites/$userId.json?auth=$authToken';
       final favoriteResponse = await http.get(Uri.parse(url));
-      final favoriteData = jsonDecode(favoriteResponse.body)as Map<String,dynamic>?;
-      
+      final favoriteData = jsonDecode(favoriteResponse.body);
 
-      print(favoriteData);
+      //print(favoriteData);
 
       final List<Product> loadedProducts = [];
       extractData.forEach((productId, productData) {
@@ -152,10 +152,12 @@ class ProductsProvider with ChangeNotifier {
             id: productId,
             title: productData['title'],
             description: productData['description'],
-            price: productData['price']
-                as double, //double.parse( productData['price']),
+            price: productData['price'], //double.parse( productData['price']),
             imageUrl: productData['imageUrl'],
-            isFavorite: (favoriteData == null ? false : favoriteData[productId] ?? false)as bool,  //Error Line.. need to solvable
+            isFavourite: (favoriteData == null
+                ? false
+                : favoriteData[productId] ??
+                    false), //Error Line.. need to solvable
           ),
         );
       });

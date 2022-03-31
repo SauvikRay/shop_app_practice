@@ -12,12 +12,13 @@ class UserProductScreen extends StatelessWidget {
   //Fetching data For refresh
   Future<void> _refreshProduct(BuildContext context) async {
     await Provider.of<ProductsProvider>(context, listen: false)
-        .dataFromTheServer();
+        .dataFromTheServer(true);
   }
 
   @override
   Widget build(BuildContext context) {
-    final productData = Provider.of<ProductsProvider>(context);
+    // final productData = Provider.of<ProductsProvider>(context);
+  //  print('rebuilding......');
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
@@ -32,22 +33,37 @@ class UserProductScreen extends StatelessWidget {
           ],
         ),
         drawer: const AppDrawer(),
-        body: RefreshIndicator(
-          onRefresh: () => _refreshProduct(context),
-          child: Padding(
-            padding: const EdgeInsets.all(8),
-            child: ListView.separated(
-              itemCount: productData.items.length,
-              itemBuilder: (_, index) => UserProductItem(
-                id: productData.items[index].id,
-                title: productData.items[index].title,
-                imageUrl: productData.items[index].imageUrl,
-              ),
-              separatorBuilder: (BuildContext context, int index) {
-                return const Divider();
-              },
-            ),
-          ),
+        body: FutureBuilder(
+          future: _refreshProduct(context),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(
+                child: CircularProgressIndicator(
+                  color: Colors.deepOrangeAccent,
+                ),
+              );
+            } else {
+              return RefreshIndicator(
+                onRefresh: () => _refreshProduct(context),
+                child: Consumer<ProductsProvider>(
+                  builder: (context, productData, _) => Padding(
+                    padding: const EdgeInsets.all(8),
+                    child: ListView.separated(
+                      itemCount: productData.items.length,
+                      itemBuilder: (_, index) => UserProductItem(
+                        id: productData.items[index].id,
+                        title: productData.items[index].title,
+                        imageUrl: productData.items[index].imageUrl,
+                      ),
+                      separatorBuilder: (BuildContext context, int index) {
+                        return const Divider();
+                      },
+                    ),
+                  ),
+                ),
+              );
+            }
+          },
         ),
       ),
     );
