@@ -43,7 +43,7 @@ class ProductItem extends StatelessWidget {
                     : Icons.favorite_border),
                 color: Colors.pink,
                 onPressed: () {
-                  productModel.toogleFavouriteStatus(authData.token!,authData.userId);
+                  productModel.toogleFavouriteStatus(authData.token!,authData.userId!);
                 },
               );
             },

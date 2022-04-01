@@ -22,7 +22,11 @@ class OrderItem {
 class Orders with ChangeNotifier {
   final String authToken;
   final String userId;
-  Orders(this.authToken, this.userId,this._orders,);
+  Orders(
+    this.authToken,
+    this.userId,
+    this._orders,
+  );
 
   List<OrderItem> _orders = [];
 
@@ -68,30 +72,38 @@ class Orders with ChangeNotifier {
           'https://shopapp-e73fe-default-rtdb.asia-southeast1.firebasedatabase.app/orders/$userId.json?auth=$authToken'),
     );
     final List<OrderItem> loadedOrders = [];
-    final extractedOrder = jsonDecode(response.body) as Map<String, dynamic>?;
-    if (extractedOrder == null) {
-      return;
+
+    try {
+      final extractedOrder = jsonDecode(response.body) as Map<String, dynamic>?;
+      if (extractedOrder == null) {
+        return;
+      }
+
+      extractedOrder.forEach((orderId, orderData) {
+        loadedOrders.add(
+          OrderItem(
+            id: orderId,
+            amount: orderData['amount'],
+            dateTime: DateTime.parse(orderData['dateTime']),
+            products: (orderData['products'] as List<dynamic>)
+                .map(
+                  (item) => CartItem(
+                      id: item['id'],
+                      title: item['title'],
+                      quantity: item['quantity'],
+                      price: item['price']),
+                )
+                .toList(),
+          ),
+        );
+      });
+      notifyListeners();
+      _orders = loadedOrders.reversed.toList();
+    } catch (e) {
+      rethrow;
+      // throw HttpException('Faild to load data');
     }
-    extractedOrder.forEach((orderId, orderData) {
-      loadedOrders.add(
-        OrderItem(
-          id: orderId,
-          amount: orderData['amount'],
-          dateTime: DateTime.parse(orderData['dateTime']),
-          products: (orderData['products'] as List<dynamic>)
-              .map(
-                (item) => CartItem(
-                    id: item['id'],
-                    title: item['title'],
-                    quantity: item['quantity'],
-                    price: item['price']),
-              )
-              .toList(),
-        ),
-      );
-    });
-    _orders = loadedOrders.reversed.toList();
-    notifyListeners();
+
     // print(jsonDecode(response.body));
   }
 }
