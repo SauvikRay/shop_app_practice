@@ -52,7 +52,7 @@ void main() => runApp(
                 fontFamily: 'Lato',
               ),
               home: auth.isAuth
-                  ? ProductsOverviewScreen()
+                  ?const ProductsOverviewScreen()
                   : FutureBuilder(
               future: auth.tryAutoLogin(),
               builder: (context, authSnapshot) =>
